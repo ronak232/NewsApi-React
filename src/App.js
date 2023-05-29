@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
+import Loading from "./hooks/Loading";
+import NewsContext from "./hooks/NewsContext";
+import NewsList from "./hooks/NewsList";
+import UseApi from "./hooks/UseApi";
 
 function App() {
+  const { response, loading } = UseApi();
+  // We create a new State values to store the news articles.
+  const [newsList, setnewsList] = useState({});
+  console.log(response);
+  // To update the newsList everytime when components information are updated.
+  useEffect(() => {
+    if (response.articles) {
+      setnewsList(response.articles);
+    }
+  }, [response.articles]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="App">
+        {loading ? (
+          <div>
+            <Loading />
+          </div>
+        ) : (
+          ""
+        )}
+
+        <NewsContext.Provider value={{ newsList, selectedList: {} }}>
+          <NewsList />
+        </NewsContext.Provider>
+      </div>
+    </>
   );
 }
 
